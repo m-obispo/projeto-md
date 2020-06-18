@@ -118,8 +118,8 @@ for t in vec_t:
     f=forca()
     v += f*dt
     if i%10==0:
-        if i%100:
-            #Cálculos de Temperatura e Pressão
+        if i%100 == 0:
+            #Cálculos de Temperatura e Pressão a cada 100 passos
             vec_KE[i] = (v**2).mean(axis=0).sum()/2 #Calcula a energia cinética média das partículas
             vec_virial[i] = (r*f).sum()/N           #Calcula a média das forças
             #eta = np.random.normal(0,0.5,(N,nDim))

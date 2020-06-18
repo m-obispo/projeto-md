@@ -29,11 +29,16 @@ Rm12 = np.zeros((N,N))
 def posicionaParticulas(disposicao='aleatoria',
         param=(L/5,L/5+1.12*np.sqrt(N))):
     '''
-        Posiciona as particulas em uma disposição aleatória ou cubica.
+        Posiciona as particulas no recipiente
 
         Parametros:
         -----------
+
+        disposicao: controla a disposição das partículas, 
+        podendo ser aleatória ou cubica.
+
         param: coordenadas da diagonal da caixa.
+        -----------
     '''
     if disposicao=='aleatoria' :
         for dim in range(nDim) :
@@ -48,6 +53,9 @@ def posicionaParticulas(disposicao='aleatoria',
         r[:,1] = distancia*(n//Nx) + param[0][1]
 
 def calcPotencias() :
+    '''
+    Subrotina de preparo para o cálculo dos potenciais.
+    '''
     global R, Rm2, Rm6, Rm12
     for dim in range(nDim) :
         rdim  = r[:,[dim]]
@@ -64,15 +72,21 @@ def calcPotencias() :
     Rm12=Rm6*Rm6
 
 def energiaPotencial() :
+    '''
+    Subrotina de cálculo dos potenciais de Lennard-Jones (LJ).
+    '''
     energia = 4*(Rm12-Rm6).sum()/2
     energia = ne.evaluate('sum(Rm12-Rm6)')
     energia *= 2
     return energia
 
-f0=np.zeros((N,N))
-f1 =np.zeros((N,nDim))
+f0 = np.zeros((N,N))
+f1 = np.zeros((N,nDim))
 
 def forca() :
+    '''
+    Subrotina de cálculo das forças a partir dos potenciais anteriormente calculados.
+    '''
     global f1
     f0 = 48*((Rm12-Rm6/2)*Rm2)
     for dim in range(nDim) :
@@ -84,6 +98,7 @@ def forca() :
 
 posicionaParticulas('cubica')
 
+#Desenha a caixa 
 plt.plot([0,L[0],L[0],0,0],[0,0,L[1],L[1],0],'k')
 #plotR = plt.plot(r[:,0],r[:,1],'o')
 plotR = plt.scatter(r[:,0],r[:,1])
@@ -99,8 +114,8 @@ f=forca()
 #print(f)
 v += f*dt/2
 
+#introduz os arrays temporais
 vec_t = np.arange(0,tFinal,dt)
-
 vec_KE = np.zeros(len(vec_t))
 vec_virial = np.zeros(len(vec_t))
 vec_Eint = np.zeros(len(vec_t))
@@ -117,7 +132,7 @@ for t in vec_t:
     v += f*dt
     if i%2==0: #i%1 demora mais do *triplo* do tempo (4691.336501836777 s)
         if i%100==0:
-            #Cálculos de Temperatura e Pressão
+            #Cálculos de Temperatura e Pressão a cada 100 passos
             vec_KE[i] = (v**2).mean(axis=0).sum()/2 #Calcula a energia cinética média das partículas
             vec_virial[i] = (r*f).sum()/N           #Calcula a média das forças
             #eta = np.random.normal(0,0.5,(N,nDim))
@@ -159,15 +174,3 @@ plt.plot(vec_Temp[vec_Temp!=0], vec_Eint[vec_Temp!=0],'b',label='Energia Interna
 plt.legend(loc='lower right')
 
 plt.show()
-
-#def passaBaixa(f):
-#    return 1/(1+(f/0.15)**10)
-#
-#fftE = np.fft.fft(vec_Eint[i])
-#numOnda = np.fft.fftfreq(len(vec_Eint),dt)
-#espectro = np.abs(fftE)**2
-#fftBaixa = np.fft.ifft(fftE*passaBaixa(numOnda))
-#plt.xlabel('T')
-#plt.ylabel('Energia')
-#plt.plot(vec_Temp[vec_Temp!=0],fftBaixa.real[vec_Temp!=0],'r')
-#
