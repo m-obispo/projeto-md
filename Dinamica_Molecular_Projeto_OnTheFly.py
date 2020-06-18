@@ -162,16 +162,3 @@ for t in vec_t:
 print("Tempo de execucao:",time.time()-t0)
 
 plt.show()
-
-#def passaBaixa(f):
-#    return 1/(1+(f/0.15)**10)
-#
-#fftE = np.fft.fft(vec_Eint[i])
-#numOnda = np.fft.fftfreq(len(vec_Eint),dt)
-#espectro = np.abs(fftE)**2
-#fftBaixa = np.fft.ifft(fftE*passaBaixa(numOnda))
-#plt.xlabel('T')
-#plt.ylabel('Energia')
-#plt.plot(vec_Temp[vec_Temp!=0],fftBaixa.real[vec_Temp!=0],'r')
-#
-#plt.show()
